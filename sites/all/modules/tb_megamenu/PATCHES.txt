@@ -1,0 +1,4 @@
+Patch: tb_megamenu-make_menu_configuration_exportable_for_features_multilingual-2028545-43.patch
+Issue: https://www.drupal.org/node/2028545
+Problem: Make TB Mega menu configuration exportable for features module
+Source: https://www.drupal.org/files/issues/tb_megamenu-make_menu_configuration_exportable_for_features_multilingual-2028545-43.patch

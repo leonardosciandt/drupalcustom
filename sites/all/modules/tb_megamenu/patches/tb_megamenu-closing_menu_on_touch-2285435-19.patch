@@ -1,0 +1,100 @@
+diff --git a/js/tb-megamenu-touch.js b/js/tb-megamenu-touch.js
+index 4b837a9..37ddbce 100644
+--- a/js/tb-megamenu-touch.js
++++ b/js/tb-megamenu-touch.js
+@@ -2,26 +2,41 @@ Drupal.TBMegaMenu = Drupal.TBMegaMenu || {};
+ 
+ (function ($) {
+   Drupal.TBMegaMenu.createTouchMenu = function(items) {
+-      items.children('a').each( function() {
+-	var $item = $(this);
+-        var tbitem = $(this).parent();
+-        $item.click( function(event){
+-          if ($item.hasClass('tb-megamenu-clicked')) {
+-            var $uri = $item.attr('href');
+-            window.location.href = $uri;
+-          }
+-          else {
+-            event.preventDefault();
+-            $item.addClass('tb-megamenu-clicked');
+-            if(!tbitem.hasClass('open')){	
+-              tbitem.addClass('open');
+-            }
+-          }
+-        }).closest('li').mouseleave( function(){
++    items.children('a').each(function () {
++      var $item = $(this);
++      var tbitem = $(this).parent();
++      $item.click(function (event) {
++        event.preventDefault();
++
++        // Menu doesn't have a child menu. Redirect to the URL normally.
++        if (!$item.hasClass('dropdown-toggle')) {
++          var $uri = $item.attr('href');
++          window.location.href = $uri;
++          return;
++        }
++
++        // Menu is open. Should close when tapped again.
++        if ($item.hasClass('tb-megamenu-clicked')) {
+           $item.removeClass('tb-megamenu-clicked');
+           tbitem.removeClass('open');
+-        });
+-     });
++          return;
++        }
++
++        // Menu is closed. Should open and close any other open menus.
++        tbitem.parent().find('li').removeClass('open');
++        tbitem.parent().find('a').removeClass('tb-megamenu-clicked');
++        tbitem.addClass('open');
++        $item.addClass('tb-megamenu-clicked');
++      }).closest('li').mouseleave(function (event) {
++        var $target = $(event.toElement);
++        if ($target.parents('.tb-megamenu-nav').length > 0) {
++          return;
++        }
++
++        $item.removeClass('tb-megamenu-clicked');
++        tbitem.removeClass('open');
++      });
++    });
+      /*
+      items.children('a').children('span.caret').each( function() {
+ 	var $item = $(this).parent();
+@@ -29,7 +44,7 @@ Drupal.TBMegaMenu = Drupal.TBMegaMenu || {};
+           tbitem = $item.parent();
+           if ($item.hasClass('tb-megamenu-clicked')) {
+             Drupal.TBMegaMenu.eventStopPropagation(event);
+-            if(tbitem.hasClass('open')){	
++            if(tbitem.hasClass('open')){
+               tbitem.removeClass('open');
+               $item.removeClass('tb-megamenu-clicked');
+             }
+@@ -37,7 +52,7 @@ Drupal.TBMegaMenu = Drupal.TBMegaMenu || {};
+           else {
+             Drupal.TBMegaMenu.eventStopPropagation(event);
+             $item.addClass('tb-megamenu-clicked');
+-            if(!tbitem.hasClass('open')){	
++            if(!tbitem.hasClass('open')){
+               tbitem.addClass('open');
+               $item.removeClass('tb-megamenu-clicked');
+             }
+@@ -46,7 +61,7 @@ Drupal.TBMegaMenu = Drupal.TBMegaMenu || {};
+      });
+      */
+   }
+-  
++
+   Drupal.TBMegaMenu.eventStopPropagation = function(event) {
+     if (event.stopPropagation) {
+       event.stopPropagation();
+@@ -54,7 +69,7 @@ Drupal.TBMegaMenu = Drupal.TBMegaMenu || {};
+     else if (window.event) {
+       window.event.cancelBubble = true;
+     }
+-  }  
++  }
+   Drupal.behaviors.tbMegaMenuTouchAction = {
+     attach: function(context) {
+       var isTouch = 'ontouchstart' in window && !(/hp-tablet/gi).test(navigator.appVersion);
